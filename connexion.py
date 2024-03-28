@@ -17,7 +17,7 @@ def se_conecter():
         username_entry.delete('0', 'end')
         password_entry.delete('0', 'end')
         app_connexion.destroy()
-        call(['python', 'main.py'])
+        call(['python', '../mains.py'])
 
 
 # Creation de l'interface principale
