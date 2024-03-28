@@ -1,9 +1,26 @@
 from cProfile import label
-# import mysql.connector
+import mysql.connector
 from subprocess import call  # Permet de faire appel à d'autre fenetre
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 
+def ajouter():
+    libele = mission_entry.get()
+    maBase = mysql.connector.connect(host='localhost', user='root', password='', database='gestion_mission')
+    meConnect = maBase.cursor()
+    try:
+        sql = 'INSERT INTO libele(code, nom) VALUES (%s, %s)'
+        val = (libele, libele)
+        meConnect.execute(sql, val)
+        maBase.commit()
+        dernier = meConnect.lastrowid
+        messagebox.showinfo('', 'info')
+        app_connexion.destroy()
+        call(['python', 'main.py'])
+    except Exception as e:
+        print(e)
+        maBase.rollback()
+        maBase.close()
 
 # Creation de l'interface principale
 app_connexion = tk.Tk()
@@ -71,6 +88,23 @@ ville_entry.pack(side="left", padx=10, pady=10)
 #
 # # Ajuster la taille du cadre form_frame
 # form_frame.place(height=300)
+
+table = ttk.Treeview(app_connexion, columns=1, height=5, show='headings')
+table.place(x=500, y=150, width=790,height=450)
+
+# Entete de la BD
+table.heading(1, text='libele')
+
+# Dimension des colonnes
+table.column(1, width=50)
+
+maBase = mysql.connector.connect(host='localhost', user='root', password='', database='gestion_mission')
+meConnect = maBase.cursor()
+meConnect.execute(' select * from libele')
+for row in meConnect:
+    table.insert('', 'end', values=row)
+
+maBase.close()
 
 # Boucle principale, execution de l'interface
 app_connexion.mainloop()
